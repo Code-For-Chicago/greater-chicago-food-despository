@@ -44,3 +44,8 @@ def test_merge_wic():
 
     with open("tests/resources/df_merged_with_wic_expected.json") as expected_output:  # noqa: E501
         assert json_str == expected_output.read()
+
+
+def test_read_csv():
+    dataframe = wic.read_csv("tests/resources/wic_participation.csv")
+    assert dataframe.loc[17001, "total"] == 365

@@ -42,7 +42,14 @@ def download_census_data(geo_ls=["zip", "county"]) -> None:
     # poverty_functions = [processPovertyData]
     poverty = CensusData(poverty_metrics, subject_table, geo_ls)
 
-    get_and_save_census_data([race, poverty],
+    # define population instance
+    population_metrics = ('population',
+                          {'B01001_001E': 'total_pop'})
+
+    population = CensusData(population_metrics, detailed_table,
+                            ["state"])
+
+    get_and_save_census_data([race, poverty, population],
                              dump_output_path='final_jsons/df_dump.json',
                              merged_output_path='final_jsons/df_merged_json.json')  # noqa: E501
 
@@ -202,7 +209,8 @@ class CensusData:
         Returns list of DataFrames
         '''
         geo_dict = {'zip': 'zip code tabulation area:*',
-                    'county': 'county:*&in=state:17'}
+                    'county': 'county:*&in=state:17',
+                    'state': 'state:17'}
         get_ls = list(self.var_dict.keys())
         df_ls = []
         for g in self.geo_ls:
@@ -247,6 +255,8 @@ class CensusData:
             geo_df = typed_df.set_index('zip code tabulation area') \
                 .drop(drop_ls, axis=1) \
                 .filter(regex='^(6[0-2])[0-9]+', axis=0)  # noqa: E501
+        elif geo == 'state':
+            geo_df = typed_df
 
         # checks if df exists
         class_df = self.df_dict.get(geo, pd.DataFrame())
@@ -312,6 +322,9 @@ class CensusData:
                 return 'majority_minority'
 
         for geo_area in cls.df_dict:
+            if geo_area == 'state':
+                continue
+
             geo_df = cls.df_dict[geo_area]
 
             # creates df using original columns
@@ -351,6 +364,8 @@ class CensusData:
             return
 
         for geo_area in cls.df_dict:
+            if geo_area == 'state':
+                continue
             geo_df = cls.df_dict[geo_area]
 
             # creates df using original columns

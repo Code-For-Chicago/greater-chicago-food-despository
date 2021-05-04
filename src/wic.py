@@ -55,10 +55,10 @@ def read_wic_data(always_run: bool = False) -> WICParticipation:
             1,
             96)
 
-        participation.women.to_csv(women_output_csv_path, index=False)
-        participation.children.to_csv(children_output_csv_path, index=False)
-        participation.infants.to_csv(infants_output_csv_path, index=False)
-        participation.total.to_csv(total_output_csv_path, index=False)
+        participation.women.to_csv(women_output_csv_path)
+        participation.children.to_csv(children_output_csv_path)
+        participation.infants.to_csv(infants_output_csv_path)
+        participation.total.to_csv(total_output_csv_path)
         return participation
     else:
         return WICParticipation(
